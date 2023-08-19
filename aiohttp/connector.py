@@ -1174,7 +1174,9 @@ class TCPConnector(BaseConnector):
             host = hinfo["host"]
             port = hinfo["port"]
 
-            server_hostname = (req.server_hostname or hinfo["hostname"]) if sslcontext else None
+            server_hostname = (
+                (req.server_hostname or hinfo["hostname"]) if sslcontext else None
+            )
 
             try:
                 transp, proto = await self._wrap_create_connection(
