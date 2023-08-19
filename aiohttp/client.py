@@ -387,6 +387,7 @@ class ClientSession:
         fingerprint: Optional[bytes] = None,
         ssl_context: Optional[SSLContext] = None,
         ssl: Optional[Union[SSLContext, bool, Fingerprint]] = None,
+        server_hostname: Optional[str] = None,
         proxy_headers: Optional[LooseHeaders] = None,
         trace_request_ctx: Optional[SimpleNamespace] = None,
         read_bufsize: Optional[int] = None,
@@ -525,6 +526,7 @@ class ClientSession:
                         timer=timer,
                         session=self,
                         ssl=ssl,
+                        server_hostname=server_hostname,
                         proxy_headers=proxy_headers,
                         traces=traces,
                     )

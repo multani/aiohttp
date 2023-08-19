@@ -268,6 +268,7 @@ class ClientRequest:
         ssl: Union[SSLContext, bool, Fingerprint, None] = None,
         proxy_headers: Optional[LooseHeaders] = None,
         traces: Optional[List["Trace"]] = None,
+        server_hostname: Optional[str] = None,
     ):
 
         if loop is None:
@@ -297,6 +298,7 @@ class ClientRequest:
         self.response_class: Type[ClientResponse] = real_response_class
         self._timer = timer if timer is not None else TimerNoop()
         self._ssl = ssl
+        self.server_hostname = server_hostname
 
         if loop.get_debug():
             self._source_traceback = traceback.extract_stack(sys._getframe(1))
