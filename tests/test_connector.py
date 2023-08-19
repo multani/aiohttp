@@ -9,6 +9,7 @@ import ssl
 import sys
 import uuid
 from collections import deque
+from contextlib import closing
 from unittest import mock
 
 import pytest
@@ -560,35 +561,31 @@ async def test_tcp_connector_certificate_error(loop) -> None:
 async def test_tcp_connector_server_hostname_default(loop) -> None:
     conn = aiohttp.TCPConnector(loop=loop)
 
-    conn._loop.create_connection = mock.AsyncMock()
-    conn._loop.create_connection.return_value = mock.Mock(), mock.Mock()
+    with mock.patch.object(
+        conn._loop, "create_connection", autospec=True, spec_set=True
+    ) as create_connection:
+        create_connection.return_value = mock.Mock(), mock.Mock()
 
-    req = ClientRequest("GET", URL("https://127.0.0.1:443"), loop=loop)
+        req = ClientRequest("GET", URL("https://127.0.0.1:443"), loop=loop)
 
-    established_connection = await conn.connect(req, [], ClientTimeout())
-    assert (
-        conn._loop.create_connection.call_args.kwargs["server_hostname"] == "127.0.0.1"
-    )
-
-    established_connection.close()
+        with closing(await conn.connect(req, [], ClientTimeout())):
+            assert create_connection.call_args.kwargs["server_hostname"] == "127.0.0.1"
 
 
 async def test_tcp_connector_server_hostname_override(loop) -> None:
     conn = aiohttp.TCPConnector(loop=loop)
 
-    conn._loop.create_connection = mock.AsyncMock()
-    conn._loop.create_connection.return_value = mock.Mock(), mock.Mock()
+    with mock.patch.object(
+        conn._loop, "create_connection", autospec=True, spec_set=True
+    ) as create_connection:
+        create_connection.return_value = mock.Mock(), mock.Mock()
 
-    req = ClientRequest(
-        "GET", URL("https://127.0.0.1:443"), loop=loop, server_hostname="localhost"
-    )
+        req = ClientRequest(
+            "GET", URL("https://127.0.0.1:443"), loop=loop, server_hostname="localhost"
+        )
 
-    established_connection = await conn.connect(req, [], ClientTimeout())
-    assert (
-        conn._loop.create_connection.call_args.kwargs["server_hostname"] == "localhost"
-    )
-
-    established_connection.close()
+        with closing(await conn.connect(req, [], ClientTimeout())):
+            assert create_connection.call_args.kwargs["server_hostname"] == "localhost"
 
 
 async def test_tcp_connector_multiple_hosts_errors(loop) -> None:
