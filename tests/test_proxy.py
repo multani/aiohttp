@@ -238,7 +238,9 @@ class TestProxy(unittest.TestCase):
             connector._create_connection(req, None, aiohttp.ClientTimeout())
         )
 
-        self.assertEqual(self.loop.start_tls.call_args.kwargs["server_hostname"], "www.python.org")
+        self.assertEqual(
+            self.loop.start_tls.call_args.kwargs["server_hostname"], "www.python.org"
+        )
 
         self.loop.run_until_complete(proxy_req.close())
         proxy_resp.close()
@@ -247,7 +249,9 @@ class TestProxy(unittest.TestCase):
     @mock.patch("aiohttp.connector.ClientRequest")
     def test_proxy_server_hostname_override(self, ClientRequestMock) -> None:
         proxy_req = ClientRequest(
-            "GET", URL("http://proxy.example.com"), loop=self.loop,
+            "GET",
+            URL("http://proxy.example.com"),
+            loop=self.loop,
         )
         ClientRequestMock.return_value = proxy_req
 
@@ -297,7 +301,10 @@ class TestProxy(unittest.TestCase):
             connector._create_connection(req, None, aiohttp.ClientTimeout())
         )
 
-        self.assertEqual(self.loop.start_tls.call_args.kwargs["server_hostname"], "server-hostname.example.com")
+        self.assertEqual(
+            self.loop.start_tls.call_args.kwargs["server_hostname"],
+            "server-hostname.example.com",
+        )
 
         self.loop.run_until_complete(proxy_req.close())
         proxy_resp.close()

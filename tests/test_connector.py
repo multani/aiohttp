@@ -561,12 +561,14 @@ async def test_tcp_connector_server_hostname_default(loop) -> None:
     conn = aiohttp.TCPConnector(loop=loop)
 
     conn._loop.create_connection = mock.AsyncMock()
-    conn._loop.create_connection.return_value =  mock.Mock(), mock.Mock()
+    conn._loop.create_connection.return_value = mock.Mock(), mock.Mock()
 
     req = ClientRequest("GET", URL("https://127.0.0.1:443"), loop=loop)
 
     established_connection = await conn.connect(req, [], ClientTimeout())
-    assert conn._loop.create_connection.call_args.kwargs["server_hostname"] == "127.0.0.1"
+    assert (
+        conn._loop.create_connection.call_args.kwargs["server_hostname"] == "127.0.0.1"
+    )
 
     established_connection.close()
 
@@ -575,12 +577,16 @@ async def test_tcp_connector_server_hostname_override(loop) -> None:
     conn = aiohttp.TCPConnector(loop=loop)
 
     conn._loop.create_connection = mock.AsyncMock()
-    conn._loop.create_connection.return_value =  mock.Mock(), mock.Mock()
+    conn._loop.create_connection.return_value = mock.Mock(), mock.Mock()
 
-    req = ClientRequest("GET", URL("https://127.0.0.1:443"), loop=loop, server_hostname="localhost")
+    req = ClientRequest(
+        "GET", URL("https://127.0.0.1:443"), loop=loop, server_hostname="localhost"
+    )
 
     established_connection = await conn.connect(req, [], ClientTimeout())
-    assert conn._loop.create_connection.call_args.kwargs["server_hostname"] == "localhost"
+    assert (
+        conn._loop.create_connection.call_args.kwargs["server_hostname"] == "localhost"
+    )
 
     established_connection.close()
 
